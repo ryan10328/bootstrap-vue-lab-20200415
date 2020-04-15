@@ -1,58 +1,69 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div>
+    <b-container fluid>
+      <b-row>
+        <b-button variant="primary" @click="open()">Open Modal</b-button>
+      </b-row>
+      <b-modal ref="my-modal">
+        <template v-slot:modal-title>Hello, World</template>
+        <template v-slot:default>
+          <sub-form
+            :onOk="onOk"
+            :onCancel="onCancel"
+            @ok-pressed="handleOk($event)"
+            @cancel-pressed="handleCancel($event)"
+          ></sub-form>
+        </template>
+        <template v-slot:modal-footer="{ok, cancel}">
+          <b-button variant="primary-outline" @click="cancel()">Cancel</b-button>
+          <b-button variant="primary" @click="ok()">Save</b-button>
+        </template>
+      </b-modal>
+    </b-container>
   </div>
 </template>
 
 <script>
+import SubForm from "./SubForm.vue";
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
+  components: {
+    SubForm
+  },
   props: {
     msg: String
+  },
+  data() {
+    return {
+      onOk: false,
+      onCancel: false
+    };
+  },
+  methods: {
+    open() {
+      this.$refs["my-modal"].show();
+    },
+    handleOk(evt) {
+      console.log("handle ok", evt);
+      this.onOk = evt;
+    },
+    handleCancel(evt) {
+      console.log("handle cancel", evt);
+      this.onCancel = evt;
+    }
+  },
+  mounted() {
+    this.$root.$on("bv::modal::hide", evt => {
+      if (evt.trigger === "ok") {
+        this.onOk = true;
+      } else if (evt.trigger === "cancel") {
+        this.onCancel = true;
+      }
+    });
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
