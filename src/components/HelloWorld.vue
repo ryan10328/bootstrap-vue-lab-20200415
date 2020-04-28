@@ -7,19 +7,21 @@
 </template>
 
 <script>
+import { INCREASE_COUNT, DECREASE_COUNT } from "../store/action.type";
+import { mapGetters } from "vuex";
 export default {
   name: "HelloWorld",
-  data() {
-    return {
-      counter: 0
-    };
+  computed: {
+    ...mapGetters(["counter"])
   },
   methods: {
     increase() {
-      this.counter = this.counter + 1;
+      // this.counter = this.counter + 1;
+      this.$store.dispatch(INCREASE_COUNT);
     },
     decrease() {
-      this.counter = this.counter - 1;
+      // this.counter = this.counter - 1;
+      this.$store.dispatch(DECREASE_COUNT);
     }
   }
 };
